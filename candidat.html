@@ -199,6 +199,89 @@
     }
 
     /* =========================================================
+       COUNTDOWN BANNER
+    ========================================================= */
+    #countdown-banner {
+      background: rgba(13, 20, 48, 0.95);
+      border-bottom: 1px solid var(--line-accent);
+      padding: 0.6rem clamp(1.25rem, 5vw, 4rem);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      backdrop-filter: blur(12px);
+    }
+
+    .countdown-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--slate-light);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    .countdown-units {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .countdown-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .countdown-digit {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      background: var(--grad-cta);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      min-width: 2ch;
+      text-align: center;
+      line-height: 1;
+      transition: transform .2s var(--ease);
+    }
+
+    .countdown-digit.tick {
+      animation: digitTick .25s var(--ease);
+    }
+
+    @keyframes digitTick {
+      0%   { transform: translateY(-4px); opacity: 0.5; }
+      100% { transform: translateY(0);    opacity: 1; }
+    }
+
+    .countdown-unit-lbl {
+      font-size: 0.6rem;
+      color: var(--slate);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .countdown-sep {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--slate);
+      margin-bottom: 10px;
+      opacity: 0.5;
+    }
+
+    .countdown-urgent .countdown-digit {
+      background: linear-gradient(135deg, #f87171, #fbbf24);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    /* =========================================================
        MAIN LAYOUT
     ========================================================= */
     main {
@@ -854,6 +937,65 @@
     .btn-go-back:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
     /* =========================================================
+       PAGE EXPIRED STATE
+    ========================================================= */
+    #page-expired {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: var(--ink);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 1.4rem;
+      padding: 3rem 2rem;
+    }
+
+    #page-expired.show { display: flex; }
+
+    .expired-icon {
+      font-size: 4.5rem;
+      line-height: 1;
+      animation: floatIcon 3s ease-in-out infinite;
+    }
+
+    @keyframes floatIcon {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    .expired-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--danger);
+    }
+
+    .expired-sub {
+      font-size: 0.95rem;
+      color: var(--slate-light);
+      max-width: 420px;
+      line-height: 1.7;
+    }
+
+    .expired-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      background: rgba(248,113,113,0.1);
+      border: 1px solid rgba(248,113,113,0.3);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--danger);
+      letter-spacing: .04em;
+    }
+
+    /* =========================================================
        FOOTER
     ========================================================= */
     footer {
@@ -925,6 +1067,15 @@
   <!-- Confetti canvas -->
   <canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
+  <!-- Page expired overlay -->
+  <div id="page-expired" role="alert" aria-live="assertive">
+    <div class="expired-icon">🔒</div>
+    <h1 class="expired-title">Compétition terminée</h1>
+    <p class="expired-sub">La période de vote pour ce challenge est maintenant clôturée. Merci à tous les participants pour votre soutien !</p>
+    <div class="expired-badge">⏱ Période de vote expirée</div>
+    <a href="candidats.html" class="btn-go-back">← Voir tous les projets</a>
+  </div>
+
   <!-- Header -->
   <header>
     <a href="candidats.html" class="logo" aria-label="Challenge Innovation — Accueil">
@@ -935,6 +1086,32 @@
       ← Tous les projets
     </a>
   </header>
+
+  <!-- Countdown banner -->
+  <div id="countdown-banner" role="timer" aria-label="Temps restant pour voter">
+    <span class="countdown-label">⏳ Fin du vote dans</span>
+    <div class="countdown-units">
+      <div class="countdown-unit">
+        <span class="countdown-digit" id="cd-days">--</span>
+        <span class="countdown-unit-lbl">Jours</span>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit">
+        <span class="countdown-digit" id="cd-hours">--</span>
+        <span class="countdown-unit-lbl">Heures</span>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit">
+        <span class="countdown-digit" id="cd-mins">--</span>
+        <span class="countdown-unit-lbl">Minutes</span>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit">
+        <span class="countdown-digit" id="cd-secs">--</span>
+        <span class="countdown-unit-lbl">Secondes</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Page error state -->
   <div id="page-error" role="alert">
@@ -976,13 +1153,7 @@
               <span class="stat-lbl">Votes reçus</span>
             </div>
           </div>
-          <div class="stat-chip">
-            <span class="stat-icon">💰</span>
-            <div class="stat-info">
-              <span class="stat-val" id="stat-raised">—</span>
-      <!---->       <span class="stat-lbl">FCFA collectés</span> 
-            </div>
-          </div>
+          <!-- stat-raised chip removed as per request (montant collecté caché) -->
         </div>
       </div>
     </article>
@@ -1172,15 +1343,38 @@
     const db  = getFirestore(app);
 
     // ── FedaPay clé publique ──────────────────────────────────────────────────────
-    // ⚠️  Ne jamais exposer la clé SECRÈTE côté frontend.
-    //     La validation finale DOIT être faite via un webhook backend (Firebase Function).
     const FEDAPAY_PUBLIC_KEY = "pk_live_nnCwtSAl0htfyCBY5v_GSD56";
     const PRICE_PER_VOTE     = 100; // FCFA
+
+    // ── Deadline : 31 jours à partir du premier chargement ───────────────────────
+    // La date de début est stockée dans localStorage pour être cohérente entre visites.
+    // Pour définir une date fixe, remplacez simplement START_DATE par ex :
+    //   const DEADLINE = new Date("2025-08-01T23:59:59");
+    const STORAGE_KEY = "ci_challenge_start";
+    const DURATION_MS = 31 * 24 * 60 * 60 * 1000; // 31 jours en ms
+
+    const getDeadline = () => {
+      let start = localStorage.getItem(STORAGE_KEY);
+      if (!start) {
+        start = Date.now().toString();
+        localStorage.setItem(STORAGE_KEY, start);
+      }
+      return new Date(parseInt(start, 10) + DURATION_MS);
+    };
+
+    const DEADLINE = getDeadline();
 
     // ── Refs DOM ──────────────────────────────────────────────────────────────────
     const loader         = document.getElementById("loader");
     const mainContent    = document.getElementById("main-content");
     const pageError      = document.getElementById("page-error");
+    const pageExpired    = document.getElementById("page-expired");
+    const countdownBanner = document.getElementById("countdown-banner");
+
+    const cdDays         = document.getElementById("cd-days");
+    const cdHours        = document.getElementById("cd-hours");
+    const cdMins         = document.getElementById("cd-mins");
+    const cdSecs         = document.getElementById("cd-secs");
 
     const candidatImg    = document.getElementById("candidat-img");
     const imgPlaceholder = document.getElementById("img-placeholder");
@@ -1189,7 +1383,7 @@
     const candidatDesc   = document.getElementById("candidat-desc");
     const votesTally     = document.getElementById("votes-tally");
     const statVotes      = document.getElementById("stat-votes");
-    const statRaised     = document.getElementById("stat-raised");
+    // statRaised intentionally removed — montant collecté caché
 
     const votesInput     = document.getElementById("votes-input");
     const breakdownVotes = document.getElementById("breakdown-votes");
@@ -1212,15 +1406,13 @@
     let candidatData     = null;
     let isProcessing     = false;
     let unsubListener    = null;
-    let pendingTxId      = null;  // ID du document "transactions" en attente
+    let pendingTxId      = null;
+    let countdownInterval = null;
 
     // ── Utilitaires ───────────────────────────────────────────────────────────────
-    const esc = (s = "") =>
-      String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-
     const fmt = (n) => Number(n || 0).toLocaleString("fr-FR");
-
     const fmtFcfa = (n) => `${fmt(n)} FCFA`;
+    const pad2 = (n) => String(n).padStart(2, "0");
 
     const getCandidatId = () =>
       new URLSearchParams(window.location.search).get("id")?.trim() || null;
@@ -1229,6 +1421,73 @@
       errorMsg.textContent = msg || "Une erreur est survenue.";
       errorBanner.classList.add("show");
       setTimeout(() => errorBanner.classList.remove("show"), 6000);
+    };
+
+    // ── Countdown ─────────────────────────────────────────────────────────────────
+    const prevVals = { d: null, h: null, m: null, s: null };
+
+    const setDigit = (el, val) => {
+      const str = pad2(val);
+      if (el.textContent !== str) {
+        el.textContent = str;
+        el.classList.remove("tick");
+        void el.offsetWidth; // reflow
+        el.classList.add("tick");
+      }
+    };
+
+    const tickCountdown = () => {
+      const now  = Date.now();
+      const diff = DEADLINE.getTime() - now;
+
+      if (diff <= 0) {
+        // Time's up — block page
+        clearInterval(countdownInterval);
+        showExpiredPage();
+        return;
+      }
+
+      const totalSecs = Math.floor(diff / 1000);
+      const days  = Math.floor(totalSecs / 86400);
+      const hours = Math.floor((totalSecs % 86400) / 3600);
+      const mins  = Math.floor((totalSecs % 3600) / 60);
+      const secs  = totalSecs % 60;
+
+      setDigit(cdDays,  days);
+      setDigit(cdHours, hours);
+      setDigit(cdMins,  mins);
+      setDigit(cdSecs,  secs);
+
+      // Urgent styling when < 24h remain
+      const banner = document.getElementById("countdown-banner");
+      if (days === 0) {
+        cdDays.closest(".countdown-unit") && null;
+        [cdDays, cdHours, cdMins, cdSecs].forEach(el => {
+          el.parentElement?.classList.add("countdown-urgent");
+        });
+      }
+    };
+
+    const startCountdown = () => {
+      // Check immediately before starting interval
+      if (Date.now() >= DEADLINE.getTime()) {
+        showExpiredPage();
+        return false;
+      }
+      tickCountdown();
+      countdownInterval = setInterval(tickCountdown, 1000);
+      return true;
+    };
+
+    // ── Show expired overlay ──────────────────────────────────────────────────────
+    const showExpiredPage = () => {
+      // Hide everything, show expired
+      mainContent.style.display    = "none";
+      countdownBanner.style.display = "none";
+      pageExpired.classList.add("show");
+      loader.classList.add("out");
+      // Disable voting button just in case
+      if (btnPay) { btnPay.disabled = true; }
     };
 
     // ── Loader / reveal ──────────────────────────────────────────────────────────
@@ -1263,7 +1522,6 @@
 
       breakdownVotes.textContent = fmt(nb);
 
-      // Animate total price change
       totalPriceEl.classList.remove("changed");
       void totalPriceEl.offsetWidth;
       totalPriceEl.textContent = fmtFcfa(total);
@@ -1271,7 +1529,6 @@
 
       btnAmountEl.textContent = fmtFcfa(total);
 
-      // Activate matching preset
       presetBtns.forEach(btn => {
         btn.classList.toggle("active", parseInt(btn.dataset.val, 10) === nb);
       });
@@ -1305,14 +1562,14 @@
       const { nom = "Sans titre", description = "", image = "", categorie = "Général", votes = 0 } = data;
 
       document.title = `${nom} — Challenge Innovation`;
-      badgeCat.textContent   = categorie;
+      badgeCat.textContent     = categorie;
       candidatName.textContent = nom;
       candidatDesc.textContent = description || "Aucune description disponible.";
 
       const vf = fmt(votes);
       votesTally.textContent = vf;
       statVotes.textContent  = vf;
-      statRaised.textContent = fmt(votes * PRICE_PER_VOTE);
+      // statRaised intentionally NOT rendered — montant collecté caché
 
       if (image) {
         candidatImg.src = image;
@@ -1332,41 +1589,19 @@
 
         votesTally.textContent = vf;
 
-        // bump animation
         statVotes.classList.remove("bump");
         void statVotes.offsetWidth;
         statVotes.textContent = vf;
         statVotes.classList.add("bump");
 
-        statRaised.textContent = fmt(v * PRICE_PER_VOTE);
+        // statRaised intentionally NOT updated — montant collecté caché
       });
     };
 
     // ────────────────────────────────────────────────────────────────────────────
     //  LOGIQUE DE PAIEMENT FEDAPAY
-    //
-    //  ARCHITECTURE SÉCURISÉE :
-    //  ┌─────────────┐   FedaPay Checkout   ┌──────────────────────┐
-    //  │  Frontend   │ ──── paiement ──────► │  FedaPay Serveurs   │
-    //  │ (ce fichier)│                       └──────────┬───────────┘
-    //  └─────────────┘                                  │ Webhook POST
-    //                                                   ▼
-    //                                       ┌──────────────────────┐
-    //                                       │  Firebase Function   │
-    //                                       │  (validation + write)│
-    //                                       └──────────────────────┘
-    //
-    //  ⚠️  La mise à jour Firestore dans onComplete() ci-dessous est
-    //      un FALLBACK de confort. La source de vérité doit toujours
-    //      être le webhook backend qui vérifie la transaction via
-    //      l'API FedaPay avec la clé SECRÈTE.
     // ────────────────────────────────────────────────────────────────────────────
 
-    /**
-     * Crée un document "transactions" en statut "pending" avant l'ouverture
-     * du checkout, puis retourne son ID. Permet au webhook backend de
-     * retrouver la transaction et de la valider.
-     */
     const createPendingTransaction = async (nombreVotes, montantTotal) => {
       const ref = await addDoc(collection(db, "transactions"), {
         candidatId:  candidatId,
@@ -1374,25 +1609,14 @@
         montantTotal: montantTotal,
         status:      "pending",
         createdAt:   serverTimestamp(),
-        // userId: auth.currentUser?.uid || null  ← à activer si Firebase Auth
       });
       return ref.id;
     };
 
-    /**
-     * Valide la transaction côté frontend (fallback) :
-     * - Incrémente les votes du candidat
-     * - Met à jour le statut de la transaction à "success"
-     *
-     * ⚠️  Cette fonction est appelée en supplément du webhook backend.
-     *     Elle ne doit PAS être la seule source de vérité.
-     */
     const finalizeVotes = async (txId, nombreVotes, montantTotal, fedapayRef) => {
-      // 1. Incrémenter les votes du candidat
       const candidatRef = doc(db, "candidats", candidatId);
       await updateDoc(candidatRef, { votes: increment(nombreVotes) });
 
-      // 2. Marquer la transaction comme success
       if (txId) {
         const txRef = doc(db, "transactions", txId);
         await updateDoc(txRef, {
@@ -1403,13 +1627,15 @@
       }
     };
 
-    /**
-     * Lance le checkout FedaPay et gère le cycle de paiement complet.
-     */
     const handlePayment = async () => {
       if (isProcessing) return;
 
-      // Validation montant
+      // Double-check expiry before allowing payment
+      if (Date.now() >= DEADLINE.getTime()) {
+        showExpiredPage();
+        return;
+      }
+
       const nb = Math.max(1, parseInt(votesInput.value, 10) || 0);
       if (nb < 1) {
         showError("Veuillez choisir au moins 1 vote.");
@@ -1423,28 +1649,20 @@
       errorBanner.classList.remove("show");
 
       try {
-        // Créer transaction en attente dans Firestore
         pendingTxId = await createPendingTransaction(nb, total);
       } catch (err) {
         console.warn("[Firestore] Impossible de créer la transaction pending :", err.message);
-        // On continue quand même — le webhook backend sera la source de vérité
         pendingTxId = null;
       }
 
-      // Ouvrir le checkout FedaPay
-      // Documentation : https://docs.fedapay.com/checkout
       FedaPay.init({
         public_key:  FEDAPAY_PUBLIC_KEY,
-        environment: "live",   // "sandbox" pour les tests
+        environment: "live",
 
         transaction: {
           amount:      total,
           description: `${nb} vote(s) pour "${candidatData?.nom || candidatId}" — Challenge Innovation`,
           currency:    { iso: "XOF" },
-          /*
-           * custom_metadata permet au webhook backend de retrouver
-           * la transaction Firestore et le candidat concerné.
-           */
           custom_metadata: JSON.stringify({
             candidatId:   candidatId,
             nombreVotes:  nb,
@@ -1453,44 +1671,31 @@
           }),
         },
 
-        /*
-         * onComplete : appelé par FedaPay quand le paiement aboutit.
-         * ⚠️  NE PAS faire confiance à ce callback seul en production.
-         *     Il peut être rejoué ou manipulé côté client.
-         *     Toujours confirmer via le webhook backend.
-         */
         onComplete: async (resp) => {
           const { reason, transaction } = resp;
 
           if (reason === FedaPay.CHECKOUT_COMPLETED) {
             try {
-              // Fallback frontend : mise à jour Firestore
               await finalizeVotes(
                 pendingTxId,
                 nb,
                 total,
                 transaction?.id || transaction?.reference || null,
               );
-
-              // Afficher confirmation UI
               showSuccessUI(nb, total, transaction?.id || transaction?.reference || "—");
               launchConfetti();
-
             } catch (err) {
               console.error("[FinalizeVotes Error]", err);
-              // Ne pas bloquer l'UX : le webhook backend prend le relais
               showSuccessUI(nb, total, transaction?.id || "—");
               launchConfetti();
             }
 
           } else if (reason === FedaPay.DIALOG_DISMISSED) {
-            // L'utilisateur a fermé la fenêtre sans payer
             showError("Paiement annulé. Vous pouvez réessayer.");
             setBtnLoading(false);
             isProcessing = false;
 
           } else {
-            // Paiement échoué
             showError("Le paiement a échoué. Veuillez vérifier votre solde et réessayer.");
             setBtnLoading(false);
             isProcessing = false;
@@ -1514,7 +1719,6 @@
     };
 
     const showSuccessUI = (nb, total, ref) => {
-      // Cacher le bouton, montrer le panneau succès
       btnPay.style.display       = "none";
       document.querySelector(".security-note").style.display = "none";
       successPanel.classList.add("show");
@@ -1582,6 +1786,10 @@
 
       if (!candidatId) { showPageError(); return; }
 
+      // Check expiry FIRST before doing anything else
+      const isAlive = startCountdown();
+      if (!isAlive) return; // expired — overlay already shown
+
       try {
         const found = await loadCandidatData(candidatId);
         if (!found) return;
@@ -1600,6 +1808,7 @@
 
     window.addEventListener("beforeunload", () => {
       if (unsubListener) unsubListener();
+      if (countdownInterval) clearInterval(countdownInterval);
     });
 
     main();
